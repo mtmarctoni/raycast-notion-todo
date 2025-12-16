@@ -264,6 +264,7 @@ export default function GetTodosCommand() {
                                       ...todo,
                                       ...updates,
                                       id: createResult.pageId,
+                                      url: createResult.url,
                                       workspace: updates.workspace!,
                                     },
                                   ]);

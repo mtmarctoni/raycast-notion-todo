@@ -40,7 +40,7 @@ export async function deleteTodo(pageId: string, workspace: Workspaces): Promise
 export async function createTodo(
   workspace: Workspaces,
   input: CreateTodoInput,
-): Promise<{ success: true; pageId: string } | { success: false; error: string }> {
+): Promise<{ success: true; pageId: string; url: string } | { success: false; error: string }> {
   const client = getNotionClient(workspace);
   const databaseId = getDatabaseId(workspace);
 
@@ -91,7 +91,7 @@ export async function createTodo(
       parent: { database_id: databaseId },
       properties,
     });
-    return { success: true, pageId: (response as { id: string }).id };
+    return { success: true, pageId: (response as { id: string; url: string }).id, url: (response as { id: string; url: string }).url };
   } catch (error: unknown) {
     if (
       typeof error === "object" &&
