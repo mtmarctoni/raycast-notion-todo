@@ -241,11 +241,12 @@ export default function GetTodosCommand() {
                           todo={todo}
                           onEdit={async (updates) => {
                             // Check if workspace changed
-                            const workspaceChanged = updates.workspace && updates.workspace !== todo.workspace;
+                            const newWorkspace = updates.workspace;
+                            const workspaceChanged = newWorkspace && newWorkspace !== todo.workspace;
                             
-                            if (workspaceChanged) {
+                            if (workspaceChanged && newWorkspace) {
                               // Create todo in new workspace
-                              const createResult = await createTodo(updates.workspace!, {
+                              const createResult = await createTodo(newWorkspace, {
                                 title: updates.title ?? todo.title,
                                 description: updates.description ?? todo.description,
                                 dueDate: updates.dueDate ?? todo.dueDate,
@@ -265,7 +266,7 @@ export default function GetTodosCommand() {
                                       ...updates,
                                       id: createResult.pageId,
                                       url: createResult.url,
-                                      workspace: updates.workspace!,
+                                      workspace: newWorkspace,
                                     },
                                   ]);
                                   showToast({ style: Toast.Style.Success, title: "Todo moved to new workspace" });

@@ -91,7 +91,8 @@ export async function createTodo(
       parent: { database_id: databaseId },
       properties,
     });
-    return { success: true, pageId: (response as { id: string; url: string }).id, url: (response as { id: string; url: string }).url };
+    const page = response as { id: string; url: string };
+    return { success: true, pageId: page.id, url: page.url };
   } catch (error: unknown) {
     if (
       typeof error === "object" &&
