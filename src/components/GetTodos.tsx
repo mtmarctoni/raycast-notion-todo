@@ -22,8 +22,8 @@ import {
   getTomorrow,
   getNextMonday,
 } from "../utils";
-import { Todo, TodoFilter, Workspaces, TodoDateGroup } from "../types";
-import { fetchTodosFromWorkspace, markTodoCompleted, updateTodo, deleteTodo } from "../notion";
+import { Todo, TodoFilter, Workspaces, TodoDateGroup, Preferences } from "../types";
+import { fetchTodosFromWorkspace, markTodoCompleted, updateTodo, deleteTodo, createTodo } from "../notion";
 import { EditTodoForm } from "./EditTodoForm";
 
 const FILTERS: TodoFilter[] = [TodoFilter.ALL, TodoFilter.PERSONAL, TodoFilter.WORK];
@@ -240,12 +240,49 @@ export default function GetTodosCommand() {
                         <EditTodoForm
                           todo={todo}
                           onEdit={async (updates) => {
-                            const success = await updateTodo(todo.id, todo.workspace, updates);
-                            if (success) {
-                              setTodos((prev) => prev.map((t) => (t.id === todo.id ? { ...t, ...updates } : t)));
-                              showToast({ style: Toast.Style.Success, title: "Todo updated" });
+                            // Check if workspace changed
+                            const workspaceChanged = updates.workspace && updates.workspace !== todo.workspace;
+                            
+                            if (workspaceChanged) {
+                              // Create todo in new workspace
+                              const createResult = await createTodo(updates.workspace!, {
+                                title: updates.title ?? todo.title,
+                                description: updates.description ?? todo.description,
+                                dueDate: updates.dueDate ?? todo.dueDate,
+                                priority: updates.priority ?? todo.priority,
+                                notes: updates.notes ?? todo.notes,
+                              });
+                              
+                              if (createResult.success) {
+                                // Delete from old workspace
+                                const deleteSuccess = await deleteTodo(todo.id, todo.workspace);
+                                if (deleteSuccess) {
+                                  // Update local state: remove old, add new
+                                  setTodos((prev) => [
+                                    ...prev.filter((t) => t.id !== todo.id),
+                                    {
+                                      ...todo,
+                                      ...updates,
+                                      id: createResult.pageId,
+                                      workspace: updates.workspace!,
+                                    },
+                                  ]);
+                                  showToast({ style: Toast.Style.Success, title: "Todo moved to new workspace" });
+                                } else {
+                                  showToast({ style: Toast.Style.Failure, title: "Failed to delete from old workspace" });
+                                }
+                              } else {
+                                showToast({ style: Toast.Style.Failure, title: "Failed to create in new workspace" });
+                              }
                             } else {
-                              showToast({ style: Toast.Style.Failure, title: "Failed to update todo" });
+                              // Normal update in same workspace
+                              const success = await updateTodo(todo.id, todo.workspace, updates);
+                              if (success) {
+                                setTodos((prev) => prev.map((t) => (t.id === todo.id ? { ...t, ...updates } : t)));
+                                showToast({ style: Toast.Style.Success, title: "Todo updated" });
+                              } else {
+                                showToast({ style: Toast.Style.Failure, title: "Failed to update todo" });
+                              }
                             }
                           }}
                         />

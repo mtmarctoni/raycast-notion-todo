@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Priority, Todo } from "../types";
+import { Priority, Todo, Workspaces } from "../types";
 import { formatLocalDate } from "../utils";
 import { Action, ActionPanel, Form } from "@raycast/api";
 
 export function EditTodoForm({ todo, onEdit }: { todo: Todo; onEdit: (updated: Partial<Todo>) => void }) {
   const [loading, setLoading] = useState(false);
-  const [workspace] = useState(todo.workspace); // workspace is not editable
+  const [workspace, setWorkspace] = useState<Workspaces>(todo.workspace);
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description ?? "");
   const [dueDate, setDueDate] = useState<Date | undefined>(todo.dueDate ? new Date(todo.dueDate) : undefined);
@@ -19,6 +19,7 @@ export function EditTodoForm({ todo, onEdit }: { todo: Todo; onEdit: (updated: P
       dueDate: dueDate ? formatLocalDate(dueDate) : undefined,
       priority,
       notes: todo.notes,
+      workspace,
     });
     setLoading(false);
   }
@@ -32,9 +33,14 @@ export function EditTodoForm({ todo, onEdit }: { todo: Todo; onEdit: (updated: P
         </ActionPanel>
       }
     >
-      <Form.Dropdown id="workspace" title="Target Workspace" defaultValue={workspace}>
-        <Form.Dropdown.Item value="personal" title="Personal" />
-        <Form.Dropdown.Item value="work" title="Work" />
+      <Form.Dropdown 
+        id="workspace" 
+        title="Target Workspace" 
+        value={workspace}
+        onChange={(value) => setWorkspace(value as Workspaces)}
+      >
+        <Form.Dropdown.Item value={Workspaces.PERSONAL} title="Personal" />
+        <Form.Dropdown.Item value={Workspaces.WORK} title="Work" />
       </Form.Dropdown>
       <Form.TextField id="title" title="Title" value={title} onChange={setTitle} autoFocus />
       <Form.TextArea id="description" title="Description / Notes" value={description} onChange={setDescription} />
