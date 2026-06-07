@@ -33,9 +33,9 @@ export function EditTodoForm({ todo, onEdit }: { todo: Todo; onEdit: (updated: P
         </ActionPanel>
       }
     >
-      <Form.Dropdown 
-        id="workspace" 
-        title="Target Workspace" 
+      <Form.Dropdown
+        id="workspace"
+        title="Target Workspace"
         value={workspace}
         onChange={(value) => setWorkspace(value as Workspaces)}
       >

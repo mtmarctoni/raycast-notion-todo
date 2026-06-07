@@ -243,7 +243,7 @@ export default function GetTodosCommand() {
                             // Check if workspace changed
                             const newWorkspace = updates.workspace;
                             const workspaceChanged = newWorkspace && newWorkspace !== todo.workspace;
-                            
+
                             if (workspaceChanged && newWorkspace) {
                               // Create todo in new workspace
                               const createResult = await createTodo(newWorkspace, {
@@ -253,7 +253,7 @@ export default function GetTodosCommand() {
                                 priority: updates.priority ?? todo.priority,
                                 notes: updates.notes ?? todo.notes,
                               });
-                              
+
                               if (createResult.success) {
                                 // Delete from old workspace
                                 const deleteSuccess = await deleteTodo(todo.id, todo.workspace);
@@ -271,7 +271,10 @@ export default function GetTodosCommand() {
                                   ]);
                                   showToast({ style: Toast.Style.Success, title: "Todo moved to new workspace" });
                                 } else {
-                                  showToast({ style: Toast.Style.Failure, title: "Failed to delete from old workspace" });
+                                  showToast({
+                                    style: Toast.Style.Failure,
+                                    title: "Failed to delete from old workspace",
+                                  });
                                 }
                               } else {
                                 showToast({ style: Toast.Style.Failure, title: "Failed to create in new workspace" });
