@@ -1,14 +1,13 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "raycast-nostion-todo",
+  "name": "raycast-notion-todo",
   "title": "Raycast Notion To-Do",
   "description": "Manage to-do's in notion from Raycast",
   "icon": "extension-icon.png",
   "author": "mtmarctoni",
   "packageManager": "pnpm@10.25.0",
   "platforms": [
-    "macOS",
-    "Windows"
+    "macOS"
   ],
   "categories": [
     "Productivity"
@@ -49,28 +48,28 @@
     {
       "name": "personal_notion_token",
       "title": "Personal Notion Token",
-      "description": "description",
+      "description": "Your Personal Notion integration token",
       "type": "password",
       "required": true
     },
     {
       "name": "personal_db_id",
       "title": "Personal DataBase ID",
-      "description": "description",
+      "description": "The database ID for your Personal Notion database",
       "type": "password",
       "required": true
     },
     {
       "name": "work_notion_token",
       "title": "Work Notion Token",
-      "description": "description",
+      "description": "Your Work Notion integration token",
       "type": "password",
       "required": true
     },
     {
       "name": "work_db_id",
       "title": "Work DataBase ID",
-      "description": "description",
+      "description": "The database ID for your Work Notion database",
       "type": "password",
       "required": true
     }

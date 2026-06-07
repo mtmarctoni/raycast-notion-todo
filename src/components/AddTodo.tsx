@@ -80,7 +80,7 @@ export default function AddNotionTodoCommand() {
       <Form.TextField id="title" title="Title" placeholder="Todo title" autoFocus />
       <Form.TextArea id="description" title="Description / Notes" placeholder="Optional notes" />
       <Form.DatePicker id="dueDate" title="Due Date" />
-      <Form.Dropdown id="priority" title="Prioridad">
+      <Form.Dropdown id="priority" title="Priority">
         {Object.values(Priority).map((priority) => (
           <Form.Dropdown.Item key={priority} value={priority} title={priority} />
         ))}

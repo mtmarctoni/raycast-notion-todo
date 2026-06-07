@@ -52,7 +52,7 @@ export function EditTodoForm({ todo, onEdit }: { todo: Todo; onEdit: (updated: P
       />
       <Form.Dropdown
         id="priority"
-        title="Prioridad"
+        title="Priority"
         value={priority ?? ""}
         onChange={(value) => setPriority(value as Priority)}
       >
