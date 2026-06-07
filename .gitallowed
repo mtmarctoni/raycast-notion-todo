@@ -1,0 +1,2 @@
+# This file allows specific patterns to be exempt from secret detection.
+# Used by detect-secrets (https://github.com/Yelp/detect-secrets)
