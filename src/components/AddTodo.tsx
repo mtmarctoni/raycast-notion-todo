@@ -34,7 +34,7 @@ export default function AddNotionTodoCommand() {
   async function handleSubmit(values: {
     workspace: Workspaces;
     title: string;
-    description?: string;
+    notes?: string;
     dueDate?: Date;
     priority?: Priority;
   }) {
@@ -43,7 +43,7 @@ export default function AddNotionTodoCommand() {
     try {
       const result = await createTodo(values.workspace, {
         title: values.title,
-        description: values.description,
+        notes: values.notes,
         dueDate: values.dueDate ? formatLocalDate(values.dueDate) : undefined,
         priority: values.priority,
       });
@@ -78,7 +78,7 @@ export default function AddNotionTodoCommand() {
         <Form.Dropdown.Item value="work" title="Work" />
       </Form.Dropdown>
       <Form.TextField id="title" title="Title" placeholder="Todo title" autoFocus />
-      <Form.TextArea id="description" title="Description / Notes" placeholder="Optional notes" />
+      <Form.TextArea id="notes" title="Notes" placeholder="Optional notes" />
       <Form.DatePicker id="dueDate" title="Due Date" />
       <Form.Dropdown id="priority" title="Priority">
         {Object.values(Priority).map((priority) => (

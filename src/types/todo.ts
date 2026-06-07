@@ -25,7 +25,6 @@ export enum Priority {
 export interface Todo {
   id: string;
   title: string;
-  description?: string;
   done: boolean;
   dueDate?: string;
   priority?: Priority;
@@ -34,9 +33,9 @@ export interface Todo {
   url: string;
 }
 
-export type CreateTodoInput = Pick<Todo, "title" | "description" | "dueDate" | "priority" | "notes">;
+export type CreateTodoInput = Pick<Todo, "title" | "dueDate" | "priority" | "notes">;
 
-export type ParsedTodo = Pick<Todo, "title" | "workspace" | "description" | "dueDate" | "priority">;
+export type ParsedTodo = Pick<Todo, "title" | "workspace" | "dueDate" | "priority" | "notes">;
 
 export interface QuickAddArguments {
   text: string;

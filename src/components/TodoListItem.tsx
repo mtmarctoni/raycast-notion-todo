@@ -136,10 +136,9 @@ export function TodoListItem({
                   if (workspaceChanged && newWorkspace) {
                     const createResult = await createTodo(newWorkspace, {
                       title: updates.title ?? todo.title,
-                      description: updates.description ?? todo.description,
+                      notes: updates.notes ?? todo.notes,
                       dueDate: updates.dueDate ?? todo.dueDate,
                       priority: updates.priority ?? todo.priority,
-                      notes: updates.notes ?? todo.notes,
                     });
 
                     if (createResult.success) {
