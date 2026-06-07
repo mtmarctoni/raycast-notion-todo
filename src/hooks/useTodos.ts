@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchTodosFromWorkspace } from "../notion";
 import { Todo, TodoDateGroup, TodoFilter, Workspaces } from "../types";
 
@@ -77,8 +77,8 @@ export function useTodos() {
     loadTodos();
   }, []);
 
-  const filteredTodos = filterTodos(todos, filter);
-  const grouped = groupByDate(filteredTodos);
+  const filteredTodos = useMemo(() => filterTodos(todos, filter), [todos, filter]);
+  const grouped = useMemo(() => groupByDate(filteredTodos), [filteredTodos]);
 
   return { todos, setTodos, loading, filter, setFilter, grouped };
 }

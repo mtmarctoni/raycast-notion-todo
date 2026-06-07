@@ -12,13 +12,13 @@ import {
 } from "../types";
 import { mapNotionPageToTodo } from "../utils";
 
-export function getNotionClient(workspace: Workspaces): Client {
+function getNotionClient(workspace: Workspaces): Client {
   const prefs = getPreferenceValues<Preferences>();
   const token = workspace === Workspaces.PERSONAL ? prefs.personal_notion_token : prefs.work_notion_token;
   return new Client({ auth: token });
 }
 
-export function getDatabaseId(workspace: Workspaces): string {
+function getDatabaseId(workspace: Workspaces): string {
   const prefs = getPreferenceValues<Preferences>();
   return workspace === Workspaces.PERSONAL ? prefs.personal_db_id : prefs.work_db_id;
 }
@@ -32,7 +32,7 @@ export async function deleteTodo(pageId: string, workspace: Workspaces): Promise
     });
     return true;
   } catch (error) {
-    console.error("Failed to delete todo:", error);
+    console.debug("Failed to delete todo:", error);
     return false;
   }
 }
@@ -119,7 +119,7 @@ export async function markTodoCompleted(pageId: string, workspace: Workspaces): 
     });
     return true;
   } catch (error) {
-    console.error("Failed to mark todo completed:", error);
+    console.debug("Failed to mark todo completed:", error);
     return false;
   }
 }
@@ -140,15 +140,12 @@ export async function updateTodo(pageId: string, workspace: Workspaces, updates:
     });
     return true;
   } catch (error) {
-    console.error("Failed to update todo:", error);
+    console.debug("Failed to update todo:", error);
     return false;
   }
 }
 
-export function getNotionToken(workspace: Workspaces): string {
-  const prefs = getPreferenceValues<Preferences>();
-  return workspace === Workspaces.PERSONAL ? prefs.personal_notion_token : prefs.work_notion_token;
-}
+const NOTION_VERSION = "2022-06-28";
 
 export async function fetchTodosFromWorkspace(workspace: Workspaces): Promise<Todo[]> {
   const token = getNotionToken(workspace);
@@ -161,7 +158,7 @@ export async function fetchTodosFromWorkspace(workspace: Workspaces): Promise<To
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28",
+        "Notion-Version": NOTION_VERSION,
       },
       body: JSON.stringify({
         sorts: [{ timestamp: "created_time", direction: "descending" }],
@@ -174,7 +171,12 @@ export async function fetchTodosFromWorkspace(workspace: Workspaces): Promise<To
     const data = (await response.json()) as { results: NotionPage[] };
     return data.results.map((page) => mapNotionPageToTodo(page, fields, workspace));
   } catch (error: unknown) {
-    console.error(`Error fetching ${workspace} todos:`, error);
+    console.debug(`Error fetching ${workspace} todos:`, error);
     return [];
   }
+}
+
+function getNotionToken(workspace: Workspaces): string {
+  const prefs = getPreferenceValues<Preferences>();
+  return workspace === Workspaces.PERSONAL ? prefs.personal_notion_token : prefs.work_notion_token;
 }
