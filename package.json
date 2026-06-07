@@ -77,7 +77,7 @@
   "dependencies": {
     "@notionhq/client": "^5.4.0",
     "@raycast/api": "^1.103.9",
-    "@raycast/utils": "^1.17.0",
+    "@raycast/utils": "^2.2.6",
     "react": "^19.2.0"
   },
   "devDependencies": {
