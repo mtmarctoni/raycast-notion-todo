@@ -115,7 +115,7 @@ export default function QuickAddTodoCommand(props: LaunchProps<{ arguments: Quic
   }
 
   if (loading) {
-    return <Detail isLoading={true} markdown="🤖 Understanding your todo with AI..." />;
+    return <Detail isLoading={true} markdown="Understanding your todo with AI..." />;
   }
 
   if (parseError || !parsedTodo) {
@@ -177,7 +177,7 @@ export default function QuickAddTodoCommand(props: LaunchProps<{ arguments: Quic
         </ActionPanel>
       }
     >
-      <Form.Description title="🤖 AI Parsed" text={`From: "${userInput}"`} />
+      <Form.Description title="AI Parsed" text={`From: "${userInput}"`} />
       <Form.Separator />
       <Form.Dropdown id="workspace" title="Target Workspace" defaultValue={parsedTodo.workspace}>
         <Form.Dropdown.Item value="personal" title="Personal" />

@@ -33,7 +33,7 @@ export function mapNotionPageToTodo(
   };
 }
 
-export function extractTitle(titleProperty: NotionPageTitle): string {
+function extractTitle(titleProperty: NotionPageTitle): string {
   const titleArr = titleProperty?.title ?? [];
   if (Array.isArray(titleArr)) {
     return titleArr.map((t) => String(t.plain_text ?? "")).join("") || "Untitled";
@@ -41,7 +41,7 @@ export function extractTitle(titleProperty: NotionPageTitle): string {
   return "Untitled";
 }
 
-export function extractRichText(richTextProperty: NotionRichText): string | undefined {
+function extractRichText(richTextProperty: NotionRichText): string | undefined {
   const richArr = richTextProperty?.rich_text ?? [];
   if (Array.isArray(richArr)) {
     return richArr.map((t) => String(t.plain_text ?? "")).join("");
@@ -49,11 +49,11 @@ export function extractRichText(richTextProperty: NotionRichText): string | unde
   return undefined;
 }
 
-export function extractCheckbox(checkboxProperty: NotionCheckbox): boolean {
+function extractCheckbox(checkboxProperty: NotionCheckbox): boolean {
   return checkboxProperty?.checkbox === true;
 }
 
-export function extractDate(dateProperty: NotionDate): string | undefined {
+function extractDate(dateProperty: NotionDate): string | undefined {
   const dateObj = dateProperty?.date;
   if (dateObj?.start && typeof dateObj.start === "string") {
     return dateObj.start;
@@ -61,7 +61,7 @@ export function extractDate(dateProperty: NotionDate): string | undefined {
   return undefined;
 }
 
-export function extractSelect(selectProperty: NotionSelect): import("../types").Priority | undefined {
+function extractSelect(selectProperty: NotionSelect): import("../types").Priority | undefined {
   const selectObj = selectProperty?.select;
   const value = selectObj?.name;
   if (typeof value === "string" && Object.values(Priority).includes(value as Priority)) {
