@@ -60,12 +60,12 @@ export async function createTodo(
     },
   };
 
-  if (input.description) {
+  if (input.notes) {
     properties[FIELDS.notes] = {
       rich_text: [
         {
           text: {
-            content: input.description,
+            content: input.notes,
           },
         },
       ],
@@ -133,7 +133,6 @@ export async function updateTodo(pageId: string, workspace: Workspaces, updates:
       properties: {
         ...(updates.title ? { [FIELDS.title]: { title: [{ text: { content: updates.title } }] } } : {}),
         ...(updates.priority ? { [FIELDS.priority]: { select: { name: updates.priority } } } : {}),
-        ...(updates.description ? { [FIELDS.notes]: { rich_text: [{ text: { content: updates.description } }] } } : {}),
         ...(updates.notes ? { [FIELDS.notes]: { rich_text: [{ text: { content: updates.notes } }] } } : {}),
         ...(updates.dueDate ? { [FIELDS.date]: { date: { start: updates.dueDate } } } : {}),
       },

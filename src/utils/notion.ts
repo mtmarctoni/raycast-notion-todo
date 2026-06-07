@@ -27,7 +27,6 @@ export function mapNotionPageToTodo(
     dueDate: extractDate(props[fields.date] as NotionDate) ?? undefined,
     priority: extractSelect(props[fields.priority] as NotionSelect) ?? undefined,
     notes: notes ?? undefined,
-    description: notes ?? undefined, // Explicitly set description (optional)
     workspace,
     url: page.url,
   };

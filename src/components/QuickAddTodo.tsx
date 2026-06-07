@@ -99,7 +99,7 @@ export default function QuickAddTodoCommand(props: LaunchProps<{ arguments: Quic
     }
 
     parseWithAI();
-  }, [userInput]);
+  }, [userInput, missing]);
 
   if (missing.length > 0) {
     return (
@@ -134,7 +134,7 @@ export default function QuickAddTodoCommand(props: LaunchProps<{ arguments: Quic
   async function handleSubmit(values: {
     workspace: Workspaces;
     title: string;
-    description?: string;
+    notes?: string;
     dueDate?: Date;
     priority?: Priority;
   }) {
@@ -143,7 +143,7 @@ export default function QuickAddTodoCommand(props: LaunchProps<{ arguments: Quic
     try {
       const result = await createTodo(values.workspace, {
         title: values.title,
-        description: values.description,
+        notes: values.notes,
         dueDate: values.dueDate ? values.dueDate.toISOString().split("T")[0] : undefined,
         priority: values.priority,
       });
@@ -184,7 +184,7 @@ export default function QuickAddTodoCommand(props: LaunchProps<{ arguments: Quic
         <Form.Dropdown.Item value="work" title="Work" />
       </Form.Dropdown>
       <Form.TextField id="title" title="Title" defaultValue={parsedTodo.title} />
-      <Form.TextArea id="description" title="Description / Notes" defaultValue={parsedTodo.description || ""} />
+      <Form.TextArea id="notes" title="Notes" defaultValue={parsedTodo.notes || ""} />
       <Form.DatePicker id="dueDate" title="Due Date" defaultValue={dueDateValue} />
       <Form.Dropdown id="priority" title="Priority" defaultValue={parsedTodo.priority || ""}>
         <Form.Dropdown.Item value="" title="No Priority" />

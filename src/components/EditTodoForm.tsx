@@ -7,7 +7,7 @@ export function EditTodoForm({ todo, onEdit }: { todo: Todo; onEdit: (updated: P
   const [loading, setLoading] = useState(false);
   const [workspace, setWorkspace] = useState<Workspaces>(todo.workspace);
   const [title, setTitle] = useState(todo.title);
-  const [description, setDescription] = useState(todo.description ?? "");
+  const [notes, setNotes] = useState(todo.notes ?? "");
   const [dueDate, setDueDate] = useState<Date | undefined>(todo.dueDate ? new Date(todo.dueDate) : undefined);
   const [priority, setPriority] = useState<Priority | undefined>(todo.priority);
 
@@ -15,10 +15,9 @@ export function EditTodoForm({ todo, onEdit }: { todo: Todo; onEdit: (updated: P
     setLoading(true);
     await onEdit({
       title,
-      description,
+      notes,
       dueDate: dueDate ? formatLocalDate(dueDate) : undefined,
       priority,
-      notes: todo.notes,
       workspace,
     });
     setLoading(false);
@@ -43,7 +42,7 @@ export function EditTodoForm({ todo, onEdit }: { todo: Todo; onEdit: (updated: P
         <Form.Dropdown.Item value={Workspaces.WORK} title="Work" />
       </Form.Dropdown>
       <Form.TextField id="title" title="Title" value={title} onChange={setTitle} autoFocus />
-      <Form.TextArea id="description" title="Description / Notes" value={description} onChange={setDescription} />
+      <Form.TextArea id="notes" title="Notes" value={notes} onChange={setNotes} />
       <Form.DatePicker
         id="dueDate"
         title="Due Date"

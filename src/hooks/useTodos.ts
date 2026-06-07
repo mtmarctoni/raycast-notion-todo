@@ -45,7 +45,7 @@ export function getPrevFilter(current: TodoFilter): TodoFilter {
   return FILTERS[(idx - 1 + FILTERS.length) % FILTERS.length];
 }
 
-export function filterTodos(todos: Todo[], filter: TodoFilter): Todo[] {
+function filterTodos(todos: Todo[], filter: TodoFilter): Todo[] {
   return todos
     .filter((todo) => {
       if (filter === TodoFilter.PERSONAL) return todo.workspace === Workspaces.PERSONAL && !todo.done;
