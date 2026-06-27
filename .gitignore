@@ -13,6 +13,9 @@ compiled_raycast_rust
 # misc
 .DS_Store
 
+# agent artifacts
+.agents/
+
 # environment files
 .env
 .env.*
