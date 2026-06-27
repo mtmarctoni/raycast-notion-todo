@@ -93,7 +93,6 @@
   },
   "scripts": {
     "build": "ray build",
-    "check": "npm run lint && npm run typecheck && npm run test",
     "dev": "ray develop",
     "fix-lint": "bash -c 'mv pnpm-lock.yaml .pnpm-lock.bak 2>/dev/null; ray lint --fix; EXIT=$?; mv .pnpm-lock.bak pnpm-lock.yaml 2>/dev/null; exit $EXIT'",
     "lint": "bash -c 'mv pnpm-lock.yaml .pnpm-lock.bak 2>/dev/null; ray lint; EXIT=$?; mv .pnpm-lock.bak pnpm-lock.yaml 2>/dev/null; exit $EXIT'",
