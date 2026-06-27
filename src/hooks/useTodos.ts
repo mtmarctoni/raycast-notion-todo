@@ -55,7 +55,7 @@ function filterTodos(todos: Todo[], filter: TodoFilter): Todo[] {
     .sort((a, b) => {
       if (!a.dueDate) return 1;
       if (!b.dueDate) return -1;
-      return a.dueDate.localeCompare(b.dueDate);
+      return b.dueDate.localeCompare(a.dueDate);
     });
 }
 
