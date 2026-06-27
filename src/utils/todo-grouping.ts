@@ -4,9 +4,7 @@ function sortByDueDate(todos: Todo[], direction: "asc" | "desc"): void {
   todos.sort((a, b) => {
     if (!a.dueDate) return 1;
     if (!b.dueDate) return -1;
-    return direction === "desc"
-      ? b.dueDate.localeCompare(a.dueDate)
-      : a.dueDate.localeCompare(b.dueDate);
+    return direction === "desc" ? b.dueDate.localeCompare(a.dueDate) : a.dueDate.localeCompare(b.dueDate);
   });
 }
 
