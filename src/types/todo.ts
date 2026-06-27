@@ -1,12 +1,12 @@
 // Todo domain types
 
 export enum TodoDateGroup {
-  PAST = "Past",
+  OVERDUE = "Overdue",
   TODAY = "Today",
   TOMORROW = "Tomorrow",
-  NEXT_WEEK = "Next Week",
+  THIS_WEEK = "This Week",
+  PENDING = "Pending",
   LATER = "Later",
-  NO_DATE = "No Date",
 }
 
 export enum Workspaces {
