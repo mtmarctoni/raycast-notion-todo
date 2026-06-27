@@ -1,5 +1,15 @@
 import { Todo, TodoDateGroup } from "../types";
 
+function sortByDueDate(todos: Todo[], direction: "asc" | "desc"): void {
+  todos.sort((a, b) => {
+    if (!a.dueDate) return 1;
+    if (!b.dueDate) return -1;
+    return direction === "desc"
+      ? b.dueDate.localeCompare(a.dueDate)
+      : a.dueDate.localeCompare(b.dueDate);
+  });
+}
+
 export const OVERDUE_THRESHOLD_DAYS = 7;
 
 export function getDateCategory(dateStr?: string): TodoDateGroup {
@@ -32,14 +42,10 @@ export function groupByDate(todos: Todo[]): Record<TodoDateGroup, Todo[]> {
     grouped[cat].push(todo);
   });
 
-  grouped[TodoDateGroup.OVERDUE].sort((a, b) => b.dueDate!.localeCompare(a.dueDate!));
-  grouped[TodoDateGroup.THIS_WEEK].sort((a, b) => a.dueDate!.localeCompare(b.dueDate!));
-  grouped[TodoDateGroup.LATER].sort((a, b) => a.dueDate!.localeCompare(b.dueDate!));
-  grouped[TodoDateGroup.PENDING].sort((a, b) => {
-    if (!a.dueDate) return 1;
-    if (!b.dueDate) return -1;
-    return b.dueDate.localeCompare(a.dueDate);
-  });
+  sortByDueDate(grouped[TodoDateGroup.OVERDUE], "desc");
+  sortByDueDate(grouped[TodoDateGroup.THIS_WEEK], "asc");
+  sortByDueDate(grouped[TodoDateGroup.LATER], "asc");
+  sortByDueDate(grouped[TodoDateGroup.PENDING], "desc");
 
   return grouped;
 }
