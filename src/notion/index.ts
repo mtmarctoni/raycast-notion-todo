@@ -1,5 +1,6 @@
 import { CreatePageParameters } from "@notionhq/client/build/src/api-endpoints";
 import { getPreferenceValues } from "@raycast/api";
+
 import { Client } from "@notionhq/client";
 import {
   PERSONAL_DB_FIELDS,
@@ -10,7 +11,7 @@ import {
   Todo,
   NotionPage,
 } from "../types";
-import { mapNotionPageToTodo } from "../utils";
+import { mapNotionPageToTodo, sleep, withRetry } from "../utils";
 
 function getNotionClient(workspace: Workspaces): Client {
   const prefs = getPreferenceValues<Preferences>();
@@ -26,10 +27,12 @@ function getDatabaseId(workspace: Workspaces): string {
 export async function deleteTodo(pageId: string, workspace: Workspaces): Promise<boolean> {
   const client = getNotionClient(workspace);
   try {
-    await client.pages.update({
-      page_id: pageId,
-      archived: true,
-    });
+    await withRetry(() =>
+      client.pages.update({
+        page_id: pageId,
+        archived: true,
+      }),
+    );
     return true;
   } catch (error) {
     console.debug("Failed to delete todo:", error);
@@ -87,10 +90,12 @@ export async function createTodo(
   }
 
   try {
-    const response = await client.pages.create({
-      parent: { database_id: databaseId },
-      properties,
-    });
+    const response = await withRetry(() =>
+      client.pages.create({
+        parent: { database_id: databaseId },
+        properties,
+      }),
+    );
     const page = response as { id: string; url: string };
     return { success: true, pageId: page.id, url: page.url };
   } catch (error: unknown) {
@@ -111,12 +116,14 @@ export async function markTodoCompleted(pageId: string, workspace: Workspaces): 
   const client = getNotionClient(workspace);
   const FIELDS = workspace === Workspaces.PERSONAL ? PERSONAL_DB_FIELDS : WORK_DB_FIELDS;
   try {
-    await client.pages.update({
-      page_id: pageId,
-      properties: {
-        [FIELDS.done]: { checkbox: true },
-      },
-    });
+    await withRetry(() =>
+      client.pages.update({
+        page_id: pageId,
+        properties: {
+          [FIELDS.done]: { checkbox: true },
+        },
+      }),
+    );
     return true;
   } catch (error) {
     console.debug("Failed to mark todo completed:", error);
@@ -128,15 +135,17 @@ export async function updateTodo(pageId: string, workspace: Workspaces, updates:
   const client = getNotionClient(workspace);
   const FIELDS = workspace === Workspaces.PERSONAL ? PERSONAL_DB_FIELDS : WORK_DB_FIELDS;
   try {
-    await client.pages.update({
-      page_id: pageId,
-      properties: {
-        ...(updates.title ? { [FIELDS.title]: { title: [{ text: { content: updates.title } }] } } : {}),
-        ...(updates.priority ? { [FIELDS.priority]: { select: { name: updates.priority } } } : {}),
-        ...(updates.notes ? { [FIELDS.notes]: { rich_text: [{ text: { content: updates.notes } }] } } : {}),
-        ...(updates.dueDate ? { [FIELDS.date]: { date: { start: updates.dueDate } } } : {}),
-      },
-    });
+    await withRetry(() =>
+      client.pages.update({
+        page_id: pageId,
+        properties: {
+          ...(updates.title ? { [FIELDS.title]: { title: [{ text: { content: updates.title } }] } } : {}),
+          ...(updates.priority ? { [FIELDS.priority]: { select: { name: updates.priority } } } : {}),
+          ...(updates.notes ? { [FIELDS.notes]: { rich_text: [{ text: { content: updates.notes } }] } } : {}),
+          ...(updates.dueDate ? { [FIELDS.date]: { date: { start: updates.dueDate } } } : {}),
+        },
+      }),
+    );
     return true;
   } catch (error) {
     console.debug("Failed to update todo:", error);
@@ -150,29 +159,46 @@ export async function fetchTodosFromWorkspace(workspace: Workspaces): Promise<To
   const token = getNotionToken(workspace);
   const databaseId = getDatabaseId(workspace);
   const fields = workspace === Workspaces.PERSONAL ? PERSONAL_DB_FIELDS : WORK_DB_FIELDS;
+  const MAX_RETRIES = 3;
 
-  try {
-    const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "Notion-Version": NOTION_VERSION,
-      },
-      body: JSON.stringify({
-        sorts: [{ timestamp: "created_time", direction: "descending" }],
-      }),
-    });
-    if (!response.ok) {
-      const errorData = (await response.json()) as { message?: string };
-      throw new Error(errorData.message || `HTTP ${response.status}`);
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Notion-Version": NOTION_VERSION,
+        },
+        body: JSON.stringify({
+          sorts: [{ timestamp: "created_time", direction: "descending" }],
+        }),
+      });
+      if (!response.ok) {
+        if (response.status === 429 && attempt < MAX_RETRIES) {
+          const retryAfter = response.headers.get("Retry-After");
+          const delay = (retryAfter ? parseInt(retryAfter, 10) : 1) * 1000 * Math.pow(2, attempt);
+          console.debug(`Notion rate limited, retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
+          await sleep(delay);
+          continue;
+        }
+        const errorData = (await response.json()) as { message?: string };
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+      const data = (await response.json()) as { results: NotionPage[] };
+      return data.results.map((page) => mapNotionPageToTodo(page, fields, workspace));
+    } catch (error: unknown) {
+      if (attempt < MAX_RETRIES) {
+        const delay = 1000 * Math.pow(2, attempt);
+        console.debug(`Notion fetch error, retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES}):`, error);
+        await sleep(delay);
+        continue;
+      }
+      console.debug(`Error fetching ${workspace} todos:`, error);
+      return [];
     }
-    const data = (await response.json()) as { results: NotionPage[] };
-    return data.results.map((page) => mapNotionPageToTodo(page, fields, workspace));
-  } catch (error: unknown) {
-    console.debug(`Error fetching ${workspace} todos:`, error);
-    return [];
   }
+  return [];
 }
 
 function getNotionToken(workspace: Workspaces): string {

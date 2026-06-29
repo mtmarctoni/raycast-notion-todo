@@ -29,16 +29,20 @@ export function useTodos() {
   const [filter, setFilter] = useState<TodoFilter>(TodoFilter.ALL);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadTodos() {
       setLoading(true);
-      const [personalTodos, workTodos] = await Promise.all([
-        fetchTodosFromWorkspace(Workspaces.PERSONAL),
-        fetchTodosFromWorkspace(Workspaces.WORK),
-      ]);
-      setTodos([...personalTodos, ...workTodos]);
-      setLoading(false);
+      const personalTodos = await fetchTodosFromWorkspace(Workspaces.PERSONAL);
+      const workTodos = await fetchTodosFromWorkspace(Workspaces.WORK);
+      if (!cancelled) {
+        setTodos([...personalTodos, ...workTodos]);
+        setLoading(false);
+      }
     }
     loadTodos();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filteredTodos = useMemo(() => filterTodos(todos, filter), [todos, filter]);
