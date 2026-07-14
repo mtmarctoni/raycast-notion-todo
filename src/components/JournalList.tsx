@@ -5,7 +5,7 @@ import { useJournals } from "../hooks/useJournals";
 import { missingJournalPreference, missingPreferences } from "../utils";
 import { JournalEntry, Preferences } from "../types";
 import { getPreferenceValues, open } from "@raycast/api";
-import { formatJournalDate, getEnergyColor, getMoodColor } from "../utils";
+import { formatJournalDate, getEnergyColor, getMoodColor, toNotionPageUrl } from "../utils";
 
 function JournalListItem({ journal, onRefresh }: { journal: JournalEntry; onRefresh: () => void }) {
   const dateLabel = formatJournalDate(journal.date);
@@ -31,7 +31,7 @@ function JournalListItem({ journal, onRefresh }: { journal: JournalEntry; onRefr
           <Action
             title="Open in Notion"
             icon={Icon.AppWindow}
-            onAction={() => open(`notion://${journal.id}`)}
+            onAction={() => open(toNotionPageUrl(journal.id))}
             shortcut={{ modifiers: ["cmd"], key: "o" }}
           />
           <Action.Push

@@ -6,7 +6,8 @@ export type MissingPreferenceKey =
   | "Personal Database ID"
   | "Work Notion Token"
   | "Work Database ID"
-  | "Journal Database ID";
+  | "Journal Database ID"
+  | "Habits Database ID";
 
 export function missingPreferences(prefs: Preferences): MissingPreferenceKey[] {
   return [
@@ -19,4 +20,8 @@ export function missingPreferences(prefs: Preferences): MissingPreferenceKey[] {
 
 export function missingJournalPreference(prefs: Preferences): MissingPreferenceKey[] {
   return [!prefs.journal_db_id && "Journal Database ID"].filter(Boolean) as MissingPreferenceKey[];
+}
+
+export function missingHabitPreference(prefs: Preferences): MissingPreferenceKey[] {
+  return [!prefs.habits_db_id && "Habits Database ID"].filter(Boolean) as MissingPreferenceKey[];
 }

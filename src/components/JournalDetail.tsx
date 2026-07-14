@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { JournalEntry } from "../types";
 import { fetchJournalBlocks, fetchBlockChildren } from "../notion/journal";
 import { notionBlocksToMarkdown } from "../utils/journal-blocks";
-import { formatJournalDate } from "../utils";
+import { formatJournalDate, toNotionPageUrl } from "../utils";
 import type { NotionBlock } from "../notion/journal";
 
 export function JournalDetail({ journalId, journal }: { journalId: string; journal: JournalEntry }) {
@@ -77,7 +77,7 @@ export function JournalDetail({ journalId, journal }: { journalId: string; journ
           <Action
             title="Open in Notion"
             icon={Icon.AppWindow}
-            onAction={() => open(`notion://${journalId}`)}
+            onAction={() => open(toNotionPageUrl(journalId))}
             shortcut={{ modifiers: ["cmd"], key: "o" }}
           />
           <Action.CopyToClipboard content={markdown} title="Copy Content" shortcut={{ modifiers: ["cmd"], key: "." }} />
