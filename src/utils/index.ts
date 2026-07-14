@@ -4,3 +4,4 @@ export * from "./ui";
 export * from "./preferences";
 export * from "./retry";
 export * from "./ai-parser";
+export * from "./journal-blocks";
