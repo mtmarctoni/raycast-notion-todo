@@ -6,4 +6,5 @@ export interface Preferences {
   work_notion_token: string;
   work_db_id: string;
   journal_db_id?: string;
+  habits_db_id?: string;
 }

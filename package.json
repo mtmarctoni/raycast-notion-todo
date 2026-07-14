@@ -49,6 +49,13 @@
       "subtitle": "View and manage journal entries",
       "description": "List, view, and create journal entries in Notion",
       "mode": "view"
+    },
+    {
+      "name": "show-habits",
+      "title": "Show Habits",
+      "subtitle": "View and manage daily habits",
+      "description": "List, view, and create daily habit entries in Notion",
+      "mode": "view"
     }
   ],
   "preferences": [
@@ -84,6 +91,13 @@
       "name": "journal_db_id",
       "title": "Journal Database ID",
       "description": "The database ID for your Journal Notion database (optional)",
+      "type": "password",
+      "required": false
+    },
+    {
+      "name": "habits_db_id",
+      "title": "Habits Database ID",
+      "description": "The database ID for your Habits Notion database (optional)",
       "type": "password",
       "required": false
     }
