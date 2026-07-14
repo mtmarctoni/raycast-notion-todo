@@ -6,8 +6,7 @@
  */
 export function toNotionPageUrl(pageId: string): string {
   const hex = pageId.replace(/-/g, "");
-  const uuid = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
-  return `notion://www.notion.so/${uuid}`;
+  return `notion://www.notion.so/${hex}`;
 }
 
 import {
