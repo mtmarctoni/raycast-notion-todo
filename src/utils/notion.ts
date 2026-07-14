@@ -1,12 +1,13 @@
 // Notion mapping and extraction helpers
 
 /**
- * Convert a 32-char hex Notion page ID to UUID format with hyphens.
- * e.g. "1633914189d381ef88f4f9a212c7ea92" -> "16339141-89d3-81ef-88f4-f9a212c7ea92"
+ * Convert a 32-char hex Notion page ID to a notion:// URL that opens in the desktop app.
+ * e.g. "1633914189d381ef88f4f9a212c7ea92" -> "notion://www.notion.so/16339141-89d3-81ef-88f4-f9a212c7ea92"
  */
 export function toNotionPageUrl(pageId: string): string {
   const hex = pageId.replace(/-/g, "");
-  return `notion://${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  const uuid = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  return `notion://www.notion.so/${uuid}`;
 }
 
 import {
