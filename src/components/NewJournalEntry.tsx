@@ -2,7 +2,7 @@ import { Form, ActionPanel, Action, showToast, Toast, open } from "@raycast/api"
 import { useState } from "react";
 import { createJournal } from "../notion/journal";
 import { MoodOption, AffectsOption, EnergyOption } from "../types";
-import { formatLocalDate } from "../utils";
+import { formatLocalDate, toNotionPageUrl } from "../utils";
 
 export function NewJournalEntry({ onCreated }: { onCreated?: () => void }) {
   const [loading, setLoading] = useState(false);
@@ -45,7 +45,7 @@ export function NewJournalEntry({ onCreated }: { onCreated?: () => void }) {
           title: "Journal entry created",
         });
         onCreated?.();
-        open(`notion://${result.pageId}`);
+        open(toNotionPageUrl(result.pageId));
       } else {
         await showToast({
           style: Toast.Style.Failure,
